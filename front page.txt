@@ -1,0 +1,91 @@
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+import java.awt.Color;
+
+
+public class front extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	static front frame;
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					 frame = new front();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public front() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 604, 424);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnLOGIN = new JButton("LOGIN");
+		btnLOGIN.setBackground(new Color(139, 69, 19));
+		btnLOGIN.setForeground(Color.YELLOW);
+		btnLOGIN.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				login ob=new login();
+				login.main(null);
+				frame.setVisible(false);
+			}
+		});
+		btnLOGIN.setBounds(0, 0, 89, 23);
+		contentPane.add(btnLOGIN);
+		
+		JButton btncreateaccount = new JButton("CREATE ACCOUNT");
+		btncreateaccount.setForeground(Color.YELLOW);
+		btncreateaccount.setBackground(new Color(139, 69, 19));
+		btncreateaccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				createaccount ob=new createaccount();
+				createaccount.main(null);
+				frame.setVisible(false);;
+			}
+		});
+		btncreateaccount.setBounds(84, 0, 139, 23);
+		contentPane.add(btncreateaccount);
+		
+		JButton btnaboutus = new JButton("ABOUT US");
+		btnaboutus.setForeground(Color.YELLOW);
+		btnaboutus.setBackground(new Color(139, 69, 19));
+		btnaboutus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aboutus ob = new aboutus();
+				aboutus.main(null);
+				
+			}
+		});
+		btnaboutus.setBounds(220, 0, 95, 23);
+		contentPane.add(btnaboutus);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\GORANTLA VINAY\\Desktop\\pics\\Screenshot (48).png"));
+		lblNewLabel.setBounds(0, 0, 596, 393);
+		contentPane.add(lblNewLabel);
+	}
+}

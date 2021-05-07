@@ -1,0 +1,173 @@
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.sql.*;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+
+import java.awt.Font;
+
+import javax.swing.JButton;
+
+import java.awt.Color;
+import java.awt.SystemColor;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.sql.*;
+import javax.swing.ImageIcon;
+import javax.swing.JDesktopPane;
+import javax.swing.UIManager;
+
+
+public class login extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField temail;
+	private JPasswordField pf;
+
+	/**
+	 * Launch the application.
+	 */
+	static login frame;
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					 frame = new login();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	
+	public login() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 862, 504);
+		contentPane = new JPanel();
+		contentPane.setBackground(Color.WHITE);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		temail = new JTextField();
+		temail.setBounds(630, 283, 179, 20);
+		contentPane.add(temail);
+		temail.setColumns(10);
+		
+		JLabel lblemailid = new JLabel("Email ID");
+		lblemailid.setForeground(Color.WHITE);
+		lblemailid.setFont(new Font("Arial", Font.ITALIC, 17));
+		lblemailid.setBounds(526, 281, 80, 20);
+		contentPane.add(lblemailid);
+		
+		pf = new JPasswordField();
+		pf.setBounds(630, 318, 179, 20);
+		contentPane.add(pf);
+		
+		JLabel lblpassword = new JLabel("Password");
+		lblpassword.setForeground(Color.WHITE);
+		lblpassword.setFont(new Font("Arial", Font.ITALIC, 17));
+		lblpassword.setBounds(526, 312, 80, 29);
+		contentPane.add(lblpassword);
+		
+		JButton btnbl = new JButton("Login");
+		btnbl.setForeground(Color.BLACK);
+		btnbl.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				
+				String password;
+				
+				try
+				{
+					int c=0;
+					
+					Class.forName("com.mysql.jdbc.Driver");
+					System.out.println("driver loaded successfully");
+					Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/svit","root","");
+					System.out.println("connected to database successfull");
+					Statement stmt=con.createStatement();
+				
+					ResultSet rs=stmt.executeQuery("select * from signup where emailid='"+temail.getText()+"'and newpassword='"+pf.getText()+"'" );
+					while(rs.next())
+					{
+						c++;
+					}
+					if(c>0)
+					{
+						Expenset ob=new Expenset(temail.getText());
+						Expenset.main(temail.getText());
+						frame.setVisible(false);
+						
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null, "USername or Password incorrect");
+					}
+					
+				}
+				catch(Exception e)
+				{
+					System.out.println("cannot process"+e.getMessage());
+				}	
+			}
+		});
+	
+		btnbl.setBackground(Color.LIGHT_GRAY);
+		btnbl.setFont(new Font("Arial", Font.BOLD, 15));
+		btnbl.setBounds(729, 359, 80, 20);
+		contentPane.add(btnbl);
+		
+		JLabel lbltext = new JLabel("EXPENSE TRACKER");
+		lbltext.setForeground(UIManager.getColor("Button.darkShadow"));
+		lbltext.setFont(new Font("Arial Black", Font.ITALIC, 24));
+		lbltext.setBounds(284, 78, 366, 85);
+		contentPane.add(lbltext);
+		
+		JButton bs = new JButton("Create Account");
+		bs.setForeground(Color.BLACK);
+		bs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				createaccount ob=new createaccount();
+				createaccount.main(null);
+			}
+		});
+		bs.setFont(new Font("Arial Black", Font.BOLD, 12));
+		bs.setBounds(526, 359, 158, 20);
+		contentPane.add(bs);
+		
+		JDesktopPane desktopPane = new JDesktopPane();
+		desktopPane.setBounds(482, 123, 1, 1);
+		contentPane.add(desktopPane);
+		
+		JButton btnNewButton = new JButton("back");
+		btnNewButton.setFont(new Font("Arial Black", Font.BOLD, 11));
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				front ob = new front();
+				front.main(null);
+				frame.setVisible(false);
+			}
+		});
+		btnNewButton.setForeground(Color.BLACK);
+		btnNewButton.setBounds(720, 415, 89, 23);
+		contentPane.add(btnNewButton);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\GORANTLA VINAY\\Desktop\\pics\\Desktop-HD-digital-images.png"));
+		lblNewLabel.setBounds(0, 0, 854, 473);
+		contentPane.add(lblNewLabel);
+	}
+}

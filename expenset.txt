@@ -1,0 +1,386 @@
+import java.awt.BorderLayout;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import javax.swing.*;
+import javax.swing.border.*;
+import java.awt.Font;
+
+
+
+public class Expenset extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField tincome;
+	private JTextField tamount;
+	private JTextField tbillno;
+	private JTextField td;
+	private JTable table;
+	int totalamount=0;
+	int totalexpense=0;
+	int totalsaving=0;
+	String useremail;
+	private JTextField textField;
+	/**
+	 * Launch the application.
+	 */
+	static Expenset frame;
+	public static void main(String useremail) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					 frame = new Expenset(useremail);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Expenset(String useremail) {
+		this.useremail=useremail;
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 878, 507);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JLabel lblAddIncome = new JLabel("Add Income");
+		lblAddIncome.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblAddIncome.setBounds(10, 55, 86, 14);
+		contentPane.add(lblAddIncome);
+
+		JLabel lblAddExpense = new JLabel("Add Expense");
+		lblAddExpense.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblAddExpense.setBounds(10, 90, 95, 14);
+		contentPane.add(lblAddExpense);
+
+		String Expense[]={"rent", "electricity", "water", "food", "gas", "baby", "others"};
+		JComboBox<?> tcb = new JComboBox<Object>(Expense);
+		// tcb.setModel(new DefaultComboBoxModel(new String[] {"rent", "electricity", "water", "food", "gas", "baby", "others"}));
+		tcb.setBounds(121, 87, 86, 20);
+		contentPane.add(tcb);
+
+		tincome = new JTextField();
+		tincome.setBounds(121, 52, 86, 20);
+		contentPane.add(tincome);
+		tincome.setColumns(10);
+
+		JLabel lblAmount = new JLabel("Amount");
+		lblAmount.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblAmount.setBounds(10, 128, 66, 14);
+		contentPane.add(lblAmount);
+
+
+
+		DefaultTableModel model2=new DefaultTableModel();
+		table = new JTable(model2);
+		table.setBounds(493, 55, 367, 302);
+		model2.addColumn("Item name");
+		model2.addColumn("price");
+		model2.addColumn("Item name");
+		model2.addColumn("price");
+		model2.addColumn("Item name");
+		table.setBorder(new BevelBorder(BevelBorder.LOWERED, Color.DARK_GRAY, null, null, null));
+		contentPane.add(table);
+
+
+
+		String column_names[]= {"Serial Number","Medicine Name","Dose","Frequency"};
+
+		model2.addRow(new Object[] {"Add Income "," Add Expense "," Amount ","BillNO"," Transactions "});
+
+		tamount = new JTextField();
+		tamount.setBounds(121, 125, 86, 20);
+		contentPane.add(tamount);
+		tamount.setColumns(10);
+
+		JLabel lblBillNo = new JLabel("Bill No");
+		lblBillNo.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblBillNo.setBounds(10, 165, 66, 14);
+		contentPane.add(lblBillNo);
+
+		JButton btnNewButton = new JButton("Update");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+
+				model2.getDataVector().removeAllElements();
+				int AddIncome=Integer.parseInt(tincome.getText());
+				//String AddExpense2=tcb.getSelectedItem();
+				int Amount=Integer.parseInt(tamount.getText());
+				String BillNO=tbillno.getText();
+				String TransactionDate=td.getText();
+				try
+				{
+					Class.forName("com.mysql.jdbc.Driver");
+					System.out.println("driver loaded successfully");
+					Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/svit","root","");
+					System.out.println("connected to database successfull");
+					Statement stmt = con.createStatement();  
+
+					stmt.execute("UPDATE bills SET AddIncome='" + tincome.getText()+ "',AddExpense='" +tcb.getSelectedItem()+ "',Amount='" + tamount.getText()+ "',TransactionDate='" + td.getText()+ "' WHERE BillNO=" + BillNO + "");  
+					// String query="update bills set 'AddIncome'= '"+tincome.getText()+"' where BillNO ='"+tbillno.getText()+"' " ;  
+					// PreparedStatement ps=con.prepareStatement(query);
+					//	
+
+//					ResultSet rs=stmt.executeQuery("call `add`()");    //calling stored procedure add()
+					contentPane.add(table);
+//					model2.addRow(new Object[] { tincome.getText(),tcb.getSelectedItem(),tamount.getText(),td.getText(), BillNO });
+//					while(rs.next())
+//					{
+//						contentPane.add(tabless);
+//						model2.addRow(new Object[] 
+//								{
+//										rs.getString(2),rs.getString(3),rs.getString(4), rs.getString(1),rs.getString(5) });
+//					}
+					
+					ResultSet rs=stmt.executeQuery("select * from bills where Useremail ='"+useremail+"'");
+					model2.addRow(new Object[] {"Add Income "," Add Expense "," Amount ","BillNO"," Transactions "});
+
+					while(rs.next())
+					{
+						contentPane.add(table);
+						model2.addRow(new Object[] 
+								{
+										rs.getString(2),rs.getString(3),rs.getString(4), rs.getString(1),rs.getString(5) });
+					}
+//					System.out.println(tcb.getSelectedItem());
+					System.out.println(tcb.getSelectedItem());
+					System.out.println("Data update successfull");
+					JOptionPane.showMessageDialog(null,"1 record updated");
+				}
+				catch(Exception e)
+				{
+					System.out.println("cannot process"+e.getMessage());
+				}
+			}
+		});
+		btnNewButton.setBounds(20, 334, 85, 23);
+		contentPane.add(btnNewButton);
+
+		tbillno = new JTextField();
+		tbillno.setBounds(121, 162, 86, 20);
+		contentPane.add(tbillno);
+		tbillno.setColumns(10);
+
+		JLabel lblTransaction = new JLabel("Transaction Date");
+		lblTransaction.setBounds(10, 208, 118, 20);
+		contentPane.add(lblTransaction);
+
+		td = new JTextField();
+		td.setBounds(131, 208, 86, 20);
+		contentPane.add(td);
+		td.setColumns(10);
+
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+				int AddIncome=Integer.parseInt(tincome.getText());
+				String AddExpense=tcb.getToolTipText();
+				int Amount=Integer.parseInt(tamount.getText());
+				String BillNO=tbillno.getText();
+				String TransactionDate=td.getText();
+				try
+				{
+					Class.forName("com.mysql.jdbc.Driver");
+					System.out.println("driver loaded successfully");
+					Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/svit","root","");
+					System.out.println("connected to database successfull");
+					Statement stmt = con.createStatement();  
+					stmt.execute ("delete from bills where BillNO=" + BillNO + "") ;  
+
+					model2.getDataVector().removeAllElements();
+
+					ResultSet rs=stmt.executeQuery("select * from bills where Useremail ='"+useremail+"'");
+					model2.addRow(new Object[] {"Add Income "," Add Expense "," Amount ","BillNO"," Transactions "});
+
+					while(rs.next())
+					{
+						contentPane.add(table);
+						model2.addRow(new Object[] 
+								{
+										rs.getString(2),rs.getString(3),rs.getString(4), rs.getString(1),rs.getString(5) });
+					}
+
+					System.out.println("Data deleted successfully");
+					JOptionPane.showMessageDialog(null,"1 record deleted");
+				}
+				catch(Exception e)
+				{
+					System.out.println("cannot process"+e.getMessage());
+				}
+			}
+		});
+		btnDelete.setBounds(136, 334, 73, 23);
+		contentPane.add(btnDelete);
+
+		JButton btnSubmit = new JButton("Submit");
+		btnSubmit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0)
+			{
+				int AddIncome=Integer.parseInt(tincome.getText());
+				String AddExpense=tcb.getToolTipText();
+				int Amount=Integer.parseInt(tamount.getText());
+				String BillNO=tbillno.getText();
+				String TransactionDate=td.getText();
+				try
+				{
+					Class.forName("com.mysql.jdbc.Driver");
+					System.out.println("driver loaded successfully");
+					Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/svit","root","");
+					System.out.println("connected to database successfull");
+					String query="insert into bills(AddIncome,AddExpense,Amount,BillNO,TransactionDate,useremail)"+"values(?,?,?,?,?,?)";
+					PreparedStatement ps=con.prepareStatement(query);
+
+					ps.setInt(1,AddIncome);
+					String value =tcb.getSelectedItem().toString();
+					ps.setString(2,value);
+					// ps.setString(2,AddExpense);
+					ps.setInt(3,Amount);
+					ps.setString(4,BillNO);
+					ps.setString(5,TransactionDate);
+					ps.setString(6,useremail);
+					ps.execute();
+
+
+
+					model2.addRow(new Object[] {tincome.getText(),tcb.getSelectedItem().toString(),tamount.getText(),tbillno.getText(),td.getText()});
+
+					JOptionPane.showMessageDialog(null,"datainsert");
+				}
+				catch(Exception e)
+				{
+					System.out.println("cannot process"+e.getMessage());
+				}
+			}
+		});
+		btnSubmit.setBounds(121, 284, 89, 23);
+		contentPane.add(btnSubmit);
+		JButton btnCheckSavings = new JButton("Check Savings");
+		btnCheckSavings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				try
+				{
+					Class.forName("com.mysql.jdbc.Driver");
+					System.out.println("driver loaded successfully");
+					Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/svit","root","");
+					System.out.println("connected to database successfull");
+					Statement stmt = con.createStatement();  
+//					ResultSet rs=stmt.executeQuery("select * from bills where Useremail='"+useremail+"'");
+					ResultSet rs=stmt.executeQuery("call `view`('"+useremail+"')");
+
+					while(rs.next())
+					{
+						int exp=Integer.parseInt(rs.getString(4));
+						int inc=Integer.parseInt(rs.getString(2));
+						totalexpense=totalexpense+exp;
+						totalamount=totalamount+inc;
+					}
+					System.out.println(totalexpense);
+					System.out.println(totalamount);
+					totalsaving=totalamount-totalexpense;
+					String totalsavings=Integer.toString(totalsaving);
+					textField.setText(totalsavings);
+				}
+				catch(Exception e)
+				{
+					System.out.println("cannot process"+e.getMessage());
+				}
+			}
+		});
+		btnCheckSavings.setBounds(231, 334, 118, 23);
+		contentPane.add(btnCheckSavings);
+		textField = new JTextField();
+		textField.setBounds(644, 400, 86, 20);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		JLabel lblNewLabel_1 = new JLabel("Saving");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblNewLabel_1.setBounds(560, 402, 46, 14);
+		contentPane.add(lblNewLabel_1);
+		JButton btnNewButton_1 = new JButton("LOGOUT");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				front ob = new front();
+				front.main(null);
+				frame.setVisible(false);
+			}
+		});
+		
+		//TODO 1. How to clear the existing table
+		//TODO 2. Find which command you are using at the start of JPanel for table viewing
+		//TODO 3. Call the same command again
+		//TODO 4. Display the contents of that command in JTable (model2)
+		
+		try
+		{
+			Class.forName("com.mysql.jdbc.Driver");
+			System.out.println("driver loaded successfully");
+			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/svit","root","");
+			System.out.println("connected to database successfull");
+			Statement stmt = con.createStatement();  
+
+
+			// String query="update bills set 'AddIncome'= '"+tincome.getText()+"' where BillNO ='"+tbillno.getText()+"' " ;  
+			// PreparedStatement ps=con.prepareStatement(query);
+			//	
+
+//			ResultSet rs=stmt.executeQuery("select * from bills where Useremail ='"+useremail+"'");
+			ResultSet rs=stmt.executeQuery("call `view`('"+useremail+"')");
+
+			while(rs.next())
+			{
+				contentPane.add(table);
+				model2.addRow(new Object[] 
+						{
+								rs.getString(2),rs.getString(3),rs.getString(4), rs.getString(1),rs.getString(5) });
+			}
+			System.out.println(tcb.getSelectedItem());
+
+
+		}
+		catch(Exception e)
+		{
+			System.out.println("cannot process"+e.getMessage());
+		}
+
+		btnNewButton_1.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnNewButton_1.setBounds(136, 420, 89, 23);
+		contentPane.add(btnNewButton_1);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\GORANTLA VINAY\\Desktop\\pics\\big-data-for-tax-collection-1024x627.jpg"));
+		lblNewLabel.setBounds(0, 0, 870, 476);
+		contentPane.add(lblNewLabel);
+
+
+	}
+}
+

@@ -1,0 +1,213 @@
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.JButton;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Font;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+import javax.swing.ImageIcon;
+
+import java.awt.Color;
+
+
+public class createaccount extends JFrame {
+
+private JPanel contentPane;
+private JTextField tfm;
+private JTextField tln;
+private JTextField temailid;
+private JPasswordField pf;
+private JPasswordField npf;
+
+/**
+* Launch the application.
+*/
+static createaccount frame;
+public static void main(String[] args) {
+EventQueue.invokeLater(new Runnable() {
+public void run() {
+try {
+ frame = new createaccount();
+frame.setVisible(true);
+} catch (Exception e) {
+e.printStackTrace();
+}
+}
+});
+}
+
+/**
+* Create the frame.
+*/
+public createaccount() {
+setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+setBounds(100, 100, 722, 465);
+contentPane = new JPanel();
+contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+setContentPane(contentPane);
+contentPane.setLayout(null);
+
+JLabel lblFirstName = new JLabel("First Name");
+lblFirstName.setForeground(Color.GRAY);
+lblFirstName.setFont(new Font("Arial", Font.ITALIC, 17));
+lblFirstName.setBounds(467, 106, 104, 17);
+contentPane.add(lblFirstName);
+
+tfm = new JTextField();
+tfm.setBounds(606, 103, 98, 20);
+contentPane.add(tfm);
+tfm.setColumns(10);
+
+JLabel lblLastName = new JLabel("Last Name");
+lblLastName.setForeground(Color.GRAY);
+lblLastName.setFont(new Font("Arial", Font.ITALIC, 17));
+lblLastName.setBounds(467, 152, 104, 14);
+contentPane.add(lblLastName);
+
+tln = new JTextField();
+tln.setBounds(606, 146, 98, 20);
+contentPane.add(tln);
+tln.setColumns(10);
+
+JLabel lblEmailId = new JLabel("Email Id");
+lblEmailId.setForeground(Color.GRAY);
+lblEmailId.setFont(new Font("Arial", Font.ITALIC, 17));
+lblEmailId.setBounds(469, 191, 81, 14);
+contentPane.add(lblEmailId);
+
+temailid = new JTextField();
+temailid.setBounds(606, 185, 98, 20);
+contentPane.add(temailid);
+temailid.setColumns(10);
+
+JLabel lblPassword = new JLabel("New Password");
+lblPassword.setForeground(Color.GRAY);
+lblPassword.setFont(new Font("Arial", Font.ITALIC, 17));
+lblPassword.setBounds(467, 237, 112, 17);
+contentPane.add(lblPassword);
+
+pf = new JPasswordField();
+pf.setBounds(606, 236, 98, 20);
+contentPane.add(pf);
+
+JLabel lblNp = new JLabel("Confirm pwd");
+lblNp.setForeground(Color.GRAY);
+lblNp.setFont(new Font("Arial", Font.ITALIC, 17));
+lblNp.setBounds(467, 286, 104, 20);
+contentPane.add(lblNp);
+
+npf = new JPasswordField();
+npf.setBounds(606, 286, 98, 20);
+contentPane.add(npf);
+
+JButton btnSignIn = new JButton("Sign up");
+btnSignIn.setBackground(Color.WHITE);
+btnSignIn.setForeground(Color.BLUE);
+btnSignIn.setFont(new Font("Arial", Font.BOLD, 13));
+btnSignIn.addActionListener(new ActionListener()
+{
+public void actionPerformed(ActionEvent arg0)
+{
+
+String firstname=tfm.getText();
+String lastname=tln.getText();
+
+String emailid=temailid.getText();
+String newpassword=pf.getText();
+String confirmnewpassword=npf.getText();
+String password;
+
+
+if((newpassword.equals(confirmnewpassword)))
+{
+
+
+
+try
+{
+Class.forName("com.mysql.jdbc.Driver");
+System.out.println("driver loaded successfully");
+Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/svit","root","");
+System.out.println("connected to database successfull");
+String query="insert into signup (firstname,lastname,emailid,newpassword,confirmnewpassword)"+"values(?,?,?,?,?)";
+PreparedStatement ps=con.prepareStatement(query);
+
+ps.setString(1,firstname);
+ps.setString(2,lastname);
+ps.setString(3,emailid);
+ps.setString(4,newpassword);
+ps.setString(5,confirmnewpassword);
+
+ps.execute();
+
+JOptionPane.showMessageDialog(null,"datainsert");
+
+
+}
+
+
+catch(Exception e)
+{
+System.out.println("cannot process"+e.getMessage());
+}
+}
+else
+{
+JOptionPane.showMessageDialog(null,"Password incorrect");
+password="incorrect";
+System.out.println("password is incoorect");
+}
+}
+});
+btnSignIn.setBounds(467, 361, 89, 23);
+contentPane.add(btnSignIn);
+
+JButton btnLogin = new JButton("Login");
+btnLogin.setBackground(Color.WHITE);
+btnLogin.setForeground(Color.BLUE);
+btnLogin.setFont(new Font("Arial", Font.BOLD, 11));
+btnLogin.addActionListener(new ActionListener() {
+public void actionPerformed(ActionEvent arg0) {
+login ob=new login();
+ob.main(null);
+frame.setVisible(false);
+}
+});
+btnLogin.setBounds(606, 362, 89, 23);
+contentPane.add(btnLogin);
+
+JLabel lblCreateAccount = new JLabel("Create Account");
+lblCreateAccount.setFont(new Font("Arial", Font.ITALIC, 28));
+lblCreateAccount.setForeground(Color.GRAY);
+lblCreateAccount.setBounds(244, 28, 248, 33);
+contentPane.add(lblCreateAccount);
+JButton btnback = new JButton("back");
+btnback.addActionListener(new ActionListener() {
+	public void actionPerformed(ActionEvent arg0) {
+		front ob = new front();
+		front.main(null);
+		frame.setVisible(false);
+	}
+});
+btnback.setFont(new Font("Arial", Font.BOLD, 11));
+btnback.setForeground(Color.BLUE);
+btnback.setBounds(555, 395, 70, 24);
+contentPane.add(btnback);
+JLabel lblNewLabel = new JLabel("");
+lblNewLabel.setIcon(new ImageIcon("C:\\Users\\GORANTLA VINAY\\Desktop\\pics\\891.jpg"));
+lblNewLabel.setBounds(0, 0, 714, 434);
+contentPane.add(lblNewLabel);
+}
+}
